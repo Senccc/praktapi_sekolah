@@ -13,6 +13,17 @@ return new class extends Migration
     {
         Schema::create('guru', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
+            $table->string('nip')->unique()->nullable();
+            $table->string('nama');
+            $table->string('tempat_lahir')->nullable();
+            $table->date('tgl_lahir')->nullable();
+            $table->enum('gender', ['laki-laki', 'perempuan']);
+            $table->string('phone_number', 15)->nullable();
+            $table->string('email')->unique();
+            $table->text('alamat')->nullable();
+            $table->string('pendidikan')->nullable();
             $table->timestamps();
         });
     }

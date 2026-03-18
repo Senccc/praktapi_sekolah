@@ -13,6 +13,16 @@ return new class extends Migration
     {
         Schema::create('siswa', function (Blueprint $table) {
             $table->id();
+            $table->string('nis')->unique()->nullable();
+            $table->string('nama');
+            $table->enum('gender', ['laki-laki', 'perempuan']);
+            $table->string('tempat_lahir')->nullable();
+            $table->date('tgl_lahir')->nullable();
+            $table->string('email')->unique();
+            $table->string('nama_ortu')->nullable();
+            $table->text('alamat')->nullable();
+            $table->string('phone_number', 15)->nullable();
+            $table->integer('kelas_id')->nullable();
             $table->timestamps();
         });
     }
