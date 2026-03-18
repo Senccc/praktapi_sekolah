@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Guru;
 
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class GuruStoreRequest extends FormRequest
@@ -12,18 +11,27 @@ class GuruStoreRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, ValidationRule|array<mixed>|string>
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
         return [
-            //
+            'user_id'      => 'required|exists:users,id|unique:guru,user_id',
+            'nip'          => 'nullable|string|unique:guru,nip',
+            'nama'         => 'required|string|max:255',
+            'gender'       => 'required|in:laki-laki,perempuan',
+            'email'        => 'required|email|unique:guru,email',
+            'tempat_lahir' => 'nullable|string',
+            'tgl_lahir'    => 'nullable|date',
+            'phone_number' => 'nullable|string|max:15',
+            'alamat'       => 'nullable|string',
+            'pendidikan'   => 'nullable|string',
         ];
     }
 }
