@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Jadwal;
 
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class JadwalUpdateRequest extends FormRequest
@@ -12,18 +11,23 @@ class JadwalUpdateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, ValidationRule|array<mixed>|string>
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
     public function rules(): array
-    {
-        return [
-            //
-        ];
+    { {
+            return [
+                'guru_id'       => 'sometimes|required|exists:guru,id',
+                'mapel_id'      => 'sometimes|required|exists:mapel,id',
+                'kelas_id'      => 'sometimes|required|exists:kelas,id',
+                'hari'          => 'sometimes|required|string|in:senin,selasa,rabu,kamis,jumat,sabtu',
+                'jam_pelajaran' => 'sometimes|required|string',
+            ];
+        }
     }
 }

@@ -3,47 +3,49 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Models\Jadwal;
+use App\Http\Requests\Jadwal\JadwalStoreRequest;
+use App\Http\Requests\Jadwal\JadwalUpdateRequest;
+use App\Http\Resources\JadwalCollection;
+use App\Http\Resources\JadwalResource;
 
 class JadwalController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $jadwal = Jadwal::with(['guru', 'mapel', 'kelas'])->paginate(10);
+        return new JadwalCollection($jadwal);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(JadwalStoreRequest $request)
     {
-        //
+        $jadwal = Jadwal::create($request->validated());
+
+        return (new JadwalResource($jadwal->load(['guru', 'mapel', 'kelas'])))
+                ->response()
+                ->setStatusCode(201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show(Jadwal $jadwal)
     {
-        //
+        return new JadwalResource($jadwal->load(['guru', 'mapel', 'kelas']));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(JadwalUpdateRequest $request, Jadwal $jadwal)
     {
-        //
+        $jadwal->update($request->validated());
+
+        return (new JadwalResource($jadwal->load(['guru', 'mapel', 'kelas'])))->additional([
+            'meta' => [
+                'message' => 'Jadwal berhasil diperbarui!',
+                'status'  => 'success'
+            ]
+        ])->response()->setStatusCode(200);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy(Jadwal $jadwal)
     {
-        //
+        $jadwal->delete();
+        return response()->json(['message' => 'Jadwal berhasil dihapus'], 200);
     }
 }
