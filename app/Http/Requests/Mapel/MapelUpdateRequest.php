@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Mapel;
 
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class MapelUpdateRequest extends FormRequest
@@ -12,18 +11,22 @@ class MapelUpdateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, ValidationRule|array<mixed>|string>
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
+        $mapelId = $this->route('mapel');
+        $id = is_object($mapelId) ? $mapelId->id : $mapelId;
+
         return [
-            //
+            'kode_mapel' => 'sometimes|required|string|unique:mapel,kode_mapel,' . $id,
+            'nama_mapel' => 'sometimes|required|string|max:255',
         ];
     }
 }
