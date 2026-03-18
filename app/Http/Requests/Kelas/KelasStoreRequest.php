@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Kelas;
 
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class KelasStoreRequest extends FormRequest
@@ -12,18 +11,19 @@ class KelasStoreRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, ValidationRule|array<mixed>|string>
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
         return [
-            //
+            'kode_kelas' => 'required|string|unique:kelas,kode_kelas',
+            'nama_kelas' => 'required|string|max:255',
         ];
     }
 }

@@ -3,47 +3,45 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\Kelas\KelasStoreRequest;
+use App\Http\Requests\Kelas\KelasUpdateRequest;
+use App\Http\Resources\KelasCollection;
+use App\Http\Resources\KelasResource;
+use App\Models\Kelas;
 
 class KelasController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $kelas = Kelas::paginate(10);
+        return new KelasCollection($kelas);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(KelasStoreRequest $request)
     {
-        //
+        $kelas = Kelas::create($request->validated());
+        return (new KelasResource($kelas))->response()->setStatusCode(201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show(Kelas $kela)
     {
-        //
+        return new KelasResource($kela);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(KelasUpdateRequest $request, Kelas $kela)
     {
-        //
+        $kela->update($request->validated());
+        return (new KelasResource($kela))->additional([
+            'meta' => [
+                'message' => 'Kelas berhasil diperbarui!',
+                'status' => 'success'
+            ]
+        ])->response()->setStatusCode(200);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy(Kelas $kela)
     {
-        //
+        $kela->delete();
+        return response()->json(['message' => 'Kelas berhasil dihapus'], 200);
     }
 }
