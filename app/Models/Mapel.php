@@ -14,6 +14,6 @@ class Mapel extends Model
 
     public function jadwals()
     {
-        return $this->hasMany('App\Model\Jadwal', 'mapel_id');
+        return $this->hasMany('App\Models\Jadwal', 'mapel_id');
     }
 }
