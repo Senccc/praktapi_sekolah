@@ -3,47 +3,59 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Models\User;
+use App\Http\Requests\User\UserStoreRequest;
+use App\Http\Requests\User\UserUpdateRequest;
+use App\Http\Resources\UserCollection;
+use App\Http\Resources\UserResource;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $users = User::paginate(10);
+        return new UserCollection($users);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(UserStoreRequest $request)
     {
-        //
+        $user = User::create([
+            'username' => $request->username,
+            'password' => Hash::make($request->password),
+            'type'     => $request->type,
+        ]);
+
+        return (new UserResource($user))
+            ->response()
+            ->setStatusCode(201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show(User $user)
     {
-        //
+        return new UserResource($user);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(UserUpdateRequest $request, User $user)
     {
-        //
+        $data = $request->only(['username', 'type']);
+
+        if ($request->filled('password')) {
+            $data['password'] = Hash::make($request->password);
+        }
+
+        $user->update($data);
+        return (new UserResource($user))->additional([
+            'meta' => [
+                'message' => 'Profil berhasil diperbarui!',
+                'status' => 'success'
+            ]
+        ])->response()->setStatusCode(200);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy(User $user)
     {
-        //
+        $user->delete();
+        return response()->json(['message' => 'User berhasil dihapus'], 200);
     }
 }
